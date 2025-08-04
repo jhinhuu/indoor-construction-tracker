@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>室内设计师工地跟踪系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+            color: white;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .header-content {
+            flex: 1;
+            min-width: 500px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            font-size: 1.8rem;
+            color: #3498db;
+        }
+        
+        .project-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-item label {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-bottom: 5px;
+        }
+        
+        .info-item .value {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .export-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .export-btn.excel {
+            background: #27ae60;
+        }
+        
+        .export-btn.excel:hover {
+            background: #219653;
+        }
+        
+        .export-btn.word {
+            background: #2b579a;
+        }
+        
+        .export-btn.word:hover {
+            background: #1e4e8c;
+        }
+        
+        .export-btn.markdown {
+            background: #9b59b6;
+        }
+        
+        .export-btn.markdown:hover {
+            background: #8e44ad;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #eef2f7;
+            border-bottom: 1px solid #cbd5e0;
+        }
+        
+        .tab {
+            padding: 18px 30px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab:hover {
+            background: #e2e8f0;
+            color: #2c3e50;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tab-section {
+            margin-bottom: 35px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #3498db;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            color: #2d3748;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background: white;
+        }
+        
+        textarea.form-control {
+            min-height: 140px;
+            resize: vertical;
+        }
+        
+        select.form-control {
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .btn-add {
+            background: #27ae60;
+            margin-top: 10px;
+        }
+        
+        .btn-add:hover {
+            background: #219653;
+        }
+        
+        .record-list {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 25px;
+        }
+        
+        .record-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .record-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+            border-color: #a0aec0;
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .record-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #2c3e50;
+        }
+        
+        .record-date {
+            color: #718096;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .record-content {
+            color: #4a5568;
+            line-height: 1.7;
+            margin: 15px 0 20px;
+        }
+        
+        .record-content p {
+            margin-bottom: 12px;
+            padding-left: 5px;
+            border-left: 3px solid #e2e8f0;
+            padding-left: 15px;
+        }
+        
+        .record-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .record-tag {
+            background: #e1f0fa;
+            color: #2c6a9c;
+            padding: 7px 15px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fef9e7;
+            color: #b7950b;
+        }
+        
+        .status-completed {
+            background: #eafaf1;
+            color: #27ae60;
+        }
+        
+        .status-urgent {
+            background: #fdeded;
+            color: #c0392b;
+        }
+        
+        .material-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .material-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .material-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .material-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .material-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .material-detail {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 0.95rem;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background: #3498db;
+            border-radius: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #718096;
+            font-size: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .record-item {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .record-list {
+                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .header-content {
+                min-width: 100%;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                min-width: 150px;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .record-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .material-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-drafting-compass"></i> 室内设计师工地跟踪系统</h1>
+                <div class="project-info">
+                    <div class="info-item">
+                        <label>项目名称</label>
+                        <div class="value">现代简约风格住宅设计</div>
+                    </div>
+                    <div class="info-item">
+                        <label>项目地址</label>
+                        <div class="value">上海市浦东新区张杨路88号</div>
+                    </div>
+                    <div class="info-item">
+                        <label>设计师</label>
+                        <div class="value">李设计师</div>
+                    </div>
+                    <div class="info-item">
+                        <label>当前阶段</label>
+                        <div class="value">木工阶段</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="export-buttons">
+                <button class="export-btn excel" id="exportExcel">
+                    <i class="fas fa-file-excel"></i> 导出Excel
+                </button>
+                <button class="export-btn word" id="exportWord">
+                    <i class="fas fa-file-word"></i> 导出Word
+                </button>
+                <button class="export-btn markdown" id="exportMarkdown">
+                    <i class="fas fa-file-alt"></i> 导出Markdown
+                </button>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="site">
+                <i class="fas fa-hard-hat"></i> 现场情况
+            </div>
+            <div class="tab" data-tab="changes">
+                <i class="fas fa-exchange-alt"></i> 工地变更
+            </div>
+            <div class="tab" data-tab="materials">
+                <i class="fas fa-cube"></i> 主材沟通
+            </div>
+        </div>
+        
+        <!-- 现场情况标签页 -->
+        <div class="tab-content active" id="site">
+            <div class="tab-section">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-list"></i> 工地概况记录
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-day"></i> 记录日期</label>
+                        <input type="date" class="form-control" value="2023-10-15">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-sun"></i> 天气状况</label>
+                        <select class="form-control">
+                            <option>☀️ 晴天</option>
+                            <option>☁️ 阴天</option>
+                            <option>🌧️ 雨天</option>
+                            <option>🌫️ 雾天</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> 现场施工人员</label>
+                        <input type="text" class="form-control" placeholder="输入现场人员信息">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tasks"></i> 当日主要工作</label>
+                        <textarea class="form-control" placeholder="记录当日主要施工内容..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-exclamation-triangle"></i> 现场问题记录</label>
+                        <textarea class="form-control" placeholder="记录现场发现的问题..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-camera"></i> 现场照片记录</label>
+                        <input type="text" class="form-control" placeholder="输入照片编号或链接">
+                    </div>
+                </div>
+                
+                <button class="btn btn-add">
+                    <i class="fas fa-save"></i> 保存现场记录
+                </button>
+            </div>
+            
+            <div class="tab-section">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i> 历史现场记录
+                </h2>
+                
+                <div class="record-list">
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">木工阶段第一天</div>
+                            <div class="record-date">2023-10-14</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>施工内容：</strong>客厅吊顶龙骨安装，背景墙基层制作</p>
+                            <p><strong>现场人员：</strong>木工张师傅团队（4人）</p>
+                            <p><strong>发现问题：</strong>主卧吊顶高度与原设计有2cm偏差</p>
+                            <p><strong>解决方案：</strong>已要求调整，明日复查</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">吊顶</span>
+                            <span class="record-tag">背景墙</span>
+                            <span class="status status-pending">需复查</span>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">水电验收完成</div>
+                            <div class="record-date">2023-10-10</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>施工内容：</strong>水路打压测试，电路验收</p>
+                            <p><strong>验收结果：</strong>水路0.8MPa保压30分钟无压降，电路分路合理</p>
+                            <p><strong>现场照片：</strong>水电照片集#23-001</p>
+                            <p><strong>备注：</strong>冷热水管间距符合要求，线管转弯弧度合理</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">水电工程</span>
+                            <span class="record-tag">验收</span>
+                            <span class="status status-completed">合格</span>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">瓦工阶段结束</div>
+                            <div class="record-date">2023-10-05</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>施工内容：</strong>全屋墙地砖铺贴完成</p>
+                            <p><strong>验收结果：</strong>空鼓率≤3%，平整度良好</p>
+                            <p><strong>发现问题：</strong>主卫地漏坡度不足，已要求整改</p>
+                            <p><strong>整改情况：</strong>已重新铺贴，验收通过</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">瓦工</span>
+                            <span class="record-tag">瓷砖</span>
+                            <span class="record-tag">验收</span>
+                            <span class="status status-completed">完成</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 工地变更标签页 -->
+        <div class="tab-content" id="changes">
+            <div class="tab-section">
+                <h2 class="section-title">
+                    <i class="fas fa-edit"></i> 新增变更记录
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> 变更位置</label>
+                        <input type="text" class="form-control" placeholder="例如：客厅背景墙">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> 变更日期</label>
+                        <input type="date" class="form-control" value="2023-10-15">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-pencil-ruler"></i> 原方案描述</label>
+                        <textarea class="form-control" placeholder="描述原始设计方案..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-drafting-compass"></i> 变更后方案</label>
+                        <textarea class="form-control" placeholder="描述变更后的方案..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-question-circle"></i> 变更原因</label>
+                        <select class="form-control">
+                            <option>客户要求</option>
+                            <option>现场条件限制</option>
+                            <option>施工问题</option>
+                            <option>设计优化</option>
+                            <option>材料变更</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-user-hard-hat"></i> 负责人</label>
+                        <input type="text" class="form-control" placeholder="负责人姓名">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tasks"></i> 状态</label>
+                        <select class="form-control">
+                            <option>待处理</option>
+                            <option>进行中</option>
+                            <option>已完成</option>
+                            <option>已确认</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-cubes"></i> 影响的主材</label>
+                        <input type="text" class="form-control" placeholder="输入受影响的主材">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> 详细说明</label>
+                        <textarea class="form-control" placeholder="详细说明变更内容及影响..."></textarea>
+                    </div>
+                </div>
+                
+                <button class="btn btn-add">
+                    <i class="fas fa-plus-circle"></i> 添加变更记录
+                </button>
+            </div>
+            
+            <div class="tab-section">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i> 历史变更记录
+                </h2>
+                
+                <div class="record-list">
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">客厅背景墙材质变更</div>
+                            <div class="record-date">2023-10-12</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>原方案：</strong>石膏板造型+乳胶漆</p>
+                            <p><strong>新方案：</strong>木格栅+岩板组合</p>
+                            <p><strong>原因：</strong>客户现场查看后希望提升质感</p>
+                            <p><strong>影响：</strong>已通知供应商调整材料订单，工期延长2天</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">木饰面</span>
+                            <span class="record-tag">背景墙</span>
+                            <span class="record-tag">客厅</span>
+                            <span class="status status-completed">已确认</span>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">主卫地漏位置调整</div>
+                            <div class="record-date">2023-10-08</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>原方案：</strong>地漏居中安装</p>
+                            <p><strong>新方案：</strong>移位至淋浴区角落</p>
+                            <p><strong>原因：</strong>现场发现排水坡度不足</p>
+                            <p><strong>影响：</strong>需重新开槽，防水重做</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">卫浴</span>
+                            <span class="record-tag">排水</span>
+                            <span class="record-tag">主卫</span>
+                            <span class="status status-completed">已完成</span>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">厨房吊顶高度调整</div>
+                            <div class="record-date">2023-10-05</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>原方案：</strong>吊顶高度2.4米</p>
+                            <p><strong>新方案：</strong>吊顶高度提升至2.45米</p>
+                            <p><strong>原因：</strong>现场发现梁体位置与原图纸不符</p>
+                            <p><strong>影响：</strong>橱柜高度相应调整，已通知定制厂家</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">吊顶</span>
+                            <span class="record-tag">厨房</span>
+                            <span class="record-tag">定制柜</span>
+                            <span class="status status-pending">进行中</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主材沟通标签页 -->
+        <div class="tab-content" id="materials">
+            <div class="tab-section">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-check"></i> 主材收口检查
+                </h2>
+                
+                <div class="material-grid">
+                    <div class="material-card">
+                        <div class="material-name">
+                            <i class="fas fa-kitchen-set"></i> 厨房台面与墙面
+                        </div>
+                        <div class="material-details">
+                            <div class="material-detail">
+                                <div class="detail-label">材料1</div>
+                                <div class="detail-value">石英石台面</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">材料2</div>
+                                <div class="detail-value">墙面瓷砖</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">处理方式</div>
+                                <div class="detail-value">打防霉胶</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">完成度</div>
+                                <div class="detail-value">100%</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 100%"></div>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">无问题</span>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-name">
+                            <i class="fas fa-door-open"></i> 木地板与过门石
+                        </div>
+                        <div class="material-details">
+                            <div class="material-detail">
+                                <div class="detail-label">材料1</div>
+                                <div class="detail-value">实木复合地板</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">材料2</div>
+                                <div class="detail-value">大理石过门石</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">处理方式</div>
+                                <div class="detail-value">T型铜压条</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">完成度</div>
+                                <div class="detail-value">80%</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 80%"></div>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">有1mm缝隙</span>
+                            <span class="record-tag">需补胶</span>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-name">
+                            <i class="fas fa-shower"></i> 淋浴房与地砖
+                        </div>
+                        <div class="material-details">
+                            <div class="material-detail">
+                                <div class="detail-label">材料1</div>
+                                <div class="detail-value">玻璃淋浴房</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">材料2</div>
+                                <div class="detail-value">防滑地砖</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">处理方式</div>
+                                <div class="detail-value">U型槽预埋</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">完成度</div>
+                                <div class="detail-value">60%</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 60%"></div>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">2mm误差</span>
+                            <span class="record-tag">需调整</span>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-name">
+                            <i class="fas fa-bed"></i> 衣柜与天花板
+                        </div>
+                        <div class="material-details">
+                            <div class="material-detail">
+                                <div class="detail-label">材料1</div>
+                                <div class="detail-value">定制衣柜</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">材料2</div>
+                                <div class="detail-value">石膏板吊顶</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">处理方式</div>
+                                <div class="detail-value">打胶收口</div>
+                            </div>
+                            <div class="material-detail">
+                                <div class="detail-label">完成度</div>
+                                <div class="detail-value">90%</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 90%"></div>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">局部需修补</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-section">
+                <h2 class="section-title">
+                    <i class="fas fa-comments"></i> 主材沟通记录
+                </h2>
+                
+                <div class="record-list">
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">橱柜尺寸确认</div>
+                            <div class="record-date">2023-10-14</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>沟通对象：</strong>欧派橱柜张经理</p>
+                            <p><strong>沟通内容：</strong>确认最终尺寸，调整吊顶高度后的柜体尺寸</p>
+                            <p><strong>结果：</strong>已提供新尺寸图纸，确认可按时交付</p>
+                            <p><strong>下一步：</strong>10月20日现场复尺</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">橱柜</span>
+                            <span class="record-tag">尺寸</span>
+                            <span class="status status-completed">已确认</span>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">瓷砖补货问题</div>
+                            <div class="record-date">2023-10-10</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>沟通对象：</strong>马可波罗瓷砖王经理</p>
+                            <p><strong>沟通内容：</strong>主卫墙砖补货，原批次缺货</p>
+                            <p><strong>结果：</strong>提供相近批次产品，色差在可接受范围</p>
+                            <p><strong>下一步：</strong>已送样品给客户确认</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">瓷砖</span>
+                            <span class="record-tag">补货</span>
+                            <span class="status status-pending">待客户确认</span>
+                        </div>
+                    </div>
+                    
+                    <div class="record-item">
+                        <div class="record-header">
+                            <div class="record-title">木地板安装时间</div>
+                            <div class="record-date">2023-10-05</div>
+                        </div>
+                        <div class="record-content">
+                            <p><strong>沟通对象：</strong>大自然地板李店长</p>
+                            <p><strong>沟通内容：</strong>确认安装时间及注意事项</p>
+                            <p><strong>结果：</strong>约定10月25日安装，需提前3天地面找平完成</p>
+                            <p><strong>下一步：</strong>跟进地面找平进度</p>
+                        </div>
+                        <div class="record-tags">
+                            <span class="record-tag">地板</span>
+                            <span class="record-tag">安装</span>
+                            <span class="status status-pending">待进行</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>室内设计工地跟踪系统 © 2023 | 设计师专用 | 最后更新: 2023-10-15</p>
+        </footer>
+    </div>
+
+    <script>
+        // 标签切换功能
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有活动标签
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 激活当前标签
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // 导出功能
+        document.getElementById('exportExcel').addEventListener('click', function() {
+            alert('Excel导出功能\n在实际应用中，这里会调用SheetJS等库将数据导出为Excel文件');
+            // 实际代码示例：
+            // const workbook = XLSX.utils.book_new();
+            // const worksheet = XLSX.utils.json_to_sheet(data);
+            // XLSX.utils.book_append_sheet(workbook, worksheet, "工地跟踪");
+            // XLSX.writeFile(workbook, "工地跟踪表.xlsx");
+        });
+        
+        document.getElementById('exportWord').addEventListener('click', function() {
+            alert('Word导出功能\n在实际应用中，这里会调用docx.js等库将数据导出为Word文档');
+        });
+        
+        document.getElementById('exportMarkdown').addEventListener('click', function() {
+            alert('Markdown导出功能\n在实际应用中，这里会将数据转换为Markdown格式并下载');
+            
+            // 模拟Markdown导出
+            const mdContent = `# 工地跟踪表 - 现代简约住宅设计\n\n## 现场情况\n\n| 日期 | 施工阶段 | 问题记录 |\n|------|----------|----------|\n| 2023-10-14 | 木工阶段 | 主卧吊顶高度偏差2cm |\n\n## 工地变更\n\n| 变更ID | 变更位置 | 状态 |\n|--------|----------|------|\n| C-001 | 客厅背景墙 | 已确认 |\n\n## 主材沟通\n\n| 材料 | 完成度 | 问题 |\n|------|--------|------|\n| 厨房台面 | 100% | 无 |\n`;
+            
+            // 在实际应用中这里会创建下载
+            // const blob = new Blob([mdContent], { type: 'text/markdown' });
+            // const url = URL.createObjectURL(blob);
+            // const a = document.createElement('a');
+            // a.href = url;
+            // a.download = '工地跟踪表.md';
+            // a.click();
+        });
+        
+        // 添加记录按钮功能
+        document.querySelectorAll('.btn-add').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tab = this.closest('.tab-content').id;
+                let message = '';
+                
+                if (tab === 'site') {
+                    message = '现场记录已保存！';
+                } else if (tab === 'changes') {
+                    message = '变更记录已添加！';
+                } else if (tab === 'materials') {
+                    message = '主材信息已更新！';
+                }
+                
+                alert(message);
+            });
+        });
+        
+        // 页面加载后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加一些动画效果
+            document.querySelectorAll('.record-item').forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
+
