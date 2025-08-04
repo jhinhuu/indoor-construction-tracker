@@ -1,2 +1,15 @@
-# indoor-construction-tracker
-indoor-construction-tracker
+# 室内设计师工地跟踪系统
+
+一个用于跟踪室内装修工地进度、记录现场情况、管理变更和主材沟通的静态网页工具。
+
+## 功能特点
+- 记录工地现场情况（施工内容、问题、照片等）
+- 管理工地变更记录（原方案、变更后方案、原因等）
+- 跟踪主材收口情况和沟通记录
+- 支持导出Excel、Word、Markdown格式的记录
+- 响应式设计，适配不同设备
+
+## 部署方法
+1. 将本仓库克隆到本地：
+   ```bash
+   git clone https://github.com/你的用户名/indoor-construction-tracker.git
