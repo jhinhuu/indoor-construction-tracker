@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>室内设计师工地跟踪系统</title>
@@ -525,9 +526,56 @@
 </div>
             
             <div class="export-buttons">
-                <button class="export-btn excel" id="exportExcel">
-                    <i class="fas fa-file-excel"></i> 导出Excel
-                </button>
+    <button class="export-btn excel" id="exportExcel">
+        <i class="fas fa-file-excel"></i> 导出Excel
+    </button>
+    <!-- 其他导出按钮保持不变 -->
+</div>
+
+<script>
+document.getElementById('exportExcel').addEventListener('click', function() {
+    // 收集项目基本信息
+    const projectInfo = {
+        '项目名称': document.querySelector('.project-info .info-item:nth-child(1) input').value,
+        '项目地址': document.querySelector('.project-info .info-item:nth-child(2) input').value,
+        '设计师': document.querySelector('.project-info .info-item:nth-child(3) input').value,
+        '当前阶段': document.querySelector('.project-info .info-item:nth-child(4) input').value,
+        '导出日期': new Date().toLocaleString()
+    };
+
+    // 收集现场记录数据
+    const siteRecords = [];
+    document.querySelectorAll('#site .record-item').forEach(item => {
+        const title = item.querySelector('.record-title').textContent;
+        const date = item.querySelector('.record-date').textContent;
+        const content = Array.from(item.querySelectorAll('.record-content p'))
+            .map(p => p.textContent)
+            .join('; ');
+        const tags = Array.from(item.querySelectorAll('.record-tag:not(.status)'))
+            .map(tag => tag.textContent)
+            .join(', ');
+        const status = item.querySelector('.status')?.textContent || '';
+        
+        siteRecords.push({ title, date, content, tags, status });
+    });
+
+    // 创建工作簿
+    const wb = XLSX.utils.book_new();
+    
+    // 创建项目信息工作表
+    const projectSheet = XLSX.utils.json_to_sheet([projectInfo]);
+    XLSX.utils.book_append_sheet(wb, projectSheet, '项目信息');
+    
+    // 创建现场记录工作表
+    if (siteRecords.length > 0) {
+        const siteSheet = XLSX.utils.json_to_sheet(siteRecords);
+        XLSX.utils.book_append_sheet(wb, siteSheet, '现场记录');
+    }
+
+    // 导出文件
+    XLSX.writeFile(wb, `${projectInfo['项目名称']}_工地记录.xlsx`);
+});
+</script>
                 <button class="export-btn word" id="exportWord">
                     <i class="fas fa-file-word"></i> 导出Word
                 </button>
@@ -1070,6 +1118,7 @@
     </script>
 </body>
 </html>
+
 
 
 
