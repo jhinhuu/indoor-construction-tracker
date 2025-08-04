@@ -12,4 +12,4 @@
 ## 部署方法
 1. 将本仓库克隆到本地：
    ```bash
-   git clone https://github.com/你的用户名/indoor-construction-tracker.git
+   git clone https://github.com/jhinhuu/indoor-construction-tracker.git
